@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
-import 'package:indagram/views/widgets/facebook_button.dart';
+import 'package:indagram/views/widgets/github_button.dart';
 import 'package:indagram/views/widgets/google_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -62,7 +62,7 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4.0),
                       ),
                     ),
-                    child: const FacebookButton(),
+                    child: const GoogleButton(),
                   ),
                   const SizedBox(height: 20.0),
                   TextButton(
@@ -74,13 +74,13 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4.0),
                       ),
                     ),
-                    child: const GoogleButton(),
+                    child: const GithubButton(),
                   ),
                   const AppDivider(padding: 40.0),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Don\'t have an account?\nSign up on Facebook or create an account on Google',
+                      'Don\'t have an account?\nSign up on Google or create an account on Github',
                       style: TextStyle(
                         color: AppColors.bodyTextColor,
                         fontSize: FontSizes.bodyFontSize,
