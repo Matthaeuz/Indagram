@@ -14,7 +14,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+          "client_id": "497619749034-f4kv5sq01907gnjlo6e1g1ikceskledi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.indagram",
+            "certificate_hash": "6409d6256df6b2f9e2142183b4c6408823a10f6a"
+          }
+        },
+        {
+          "client_id": "497619749034-g4rvin0vmnd9duhmaaevs6lqnf8d1bft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.indagram",
+            "certificate_hash": "fb846c0f1b534902554522029fa86ea824a8f1ac"
+          }
+        },
+        {
+          "client_id": "497619749034-6n65ht649ss3m7c7i5bi02715e2dkeoi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -50,7 +66,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+          "client_id": "497619749034-973b1uaplkj1eb1q1c5reh7pbgcvfn3l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.indagram",
+            "certificate_hash": "fb846c0f1b534902554522029fa86ea824a8f1ac"
+          }
+        },
+        {
+          "client_id": "497619749034-tl2gvf3uld9mrtrb3to05iput6bvqha3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.indagram",
+            "certificate_hash": "6409d6256df6b2f9e2142183b4c6408823a10f6a"
+          }
+        },
+        {
+          "client_id": "497619749034-6n65ht649ss3m7c7i5bi02715e2dkeoi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
