@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "497619749034",
+    "project_id": "indagram-31d57",
+    "storage_bucket": "indagram-31d57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497619749034:android:974641b67d778ad6bd68d3",
+        "android_client_info": {
+          "package_name": "com.company.indagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATRoZCTNpHoqJkWWuUv4DQPBVhv6K1Cpc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "497619749034-1ukru6b2dk7aald9s443dtqepu53infh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.indagram.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497619749034:android:6d04ee912562e1d1bd68d3",
+        "android_client_info": {
+          "package_name": "com.example.indagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATRoZCTNpHoqJkWWuUv4DQPBVhv6K1Cpc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497619749034-22muk7d3879glhu4vn8innda1gs197eq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "497619749034-1ukru6b2dk7aald9s443dtqepu53infh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.indagram.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
