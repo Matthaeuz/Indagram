@@ -9,7 +9,6 @@ import 'package:indagram/views/widgets/google_button.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:indagram/views/screens/HomePage.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -40,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => HomeScreen(),
           ),
         );
       }
@@ -116,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => HomeScreen(),
                           ),
                         );
                       }
