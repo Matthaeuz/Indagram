@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
 
 import 'package:indagram/views/screens/home_screen.dart';
-import 'package:indagram/helpers/auth/github_login.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/github_button.dart';
 import 'package:indagram/views/widgets/google_button.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
-final FirebaseAuth auth = FirebaseAuth.instance;
-
+import 'package:indagram/helpers/auth/google_login.dart';
+import 'package:indagram/helpers/auth/github_login.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -20,32 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Future<void> google_signin(BuildContext context) async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-      final AuthCredential authCredential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-
-      // Getting users credential
-      UserCredential result = await auth.signInWithCredential(authCredential);
-      User? user = result.user;
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
