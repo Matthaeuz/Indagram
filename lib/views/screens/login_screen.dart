@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/helpers/auth/github_login.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/github_button.dart';
 import 'package:indagram/views/widgets/google_button.dart';
@@ -105,7 +106,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final user = await signInWithGitHub();
+
+                      if (user != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
+                      }
+                    },
                     style: TextButton.styleFrom(
                       backgroundColor: AppColors.loginButtonColor,
                       foregroundColor: AppColors.loginButtonTextColor,
