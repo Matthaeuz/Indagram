@@ -46,6 +46,14 @@
           }
         },
         {
+          "client_id": "497619749034-lqo452fdemfsnn5kohpenctnqheah61q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.indagram",
+            "certificate_hash": "a2238158bfc66bf8a1340afe509cf4710688bc13"
+          }
+        },
+        {
           "client_id": "497619749034-6n65ht649ss3m7c7i5bi02715e2dkeoi.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -103,6 +111,14 @@
           "android_info": {
             "package_name": "com.example.indagram",
             "certificate_hash": "216be89f4bd1c9407d26de7d2e311f6577638446"
+          }
+        },
+        {
+          "client_id": "497619749034-ksfs1onlfia8fkt1ismp3kb9hjt12cj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.indagram",
+            "certificate_hash": "a2238158bfc66bf8a1340afe509cf4710688bc13"
           }
         },
         {
