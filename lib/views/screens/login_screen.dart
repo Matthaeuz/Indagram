@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
+
+import 'package:indagram/views/screens/home_screen.dart';
 import 'package:indagram/helpers/auth/github_login.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/github_button.dart';
@@ -50,9 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Instant-gram!',
+          AppTexts.appBarText,
           style: TextStyle(
-            color: AppColors.appBarTextColor,
+            color: AppColors.appBarFgColor,
+            fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: AppColors.appBarColor,
@@ -72,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Welcome to Instant-gram!',
+                      AppTexts.titleText,
                       style: TextStyle(
                         color: AppColors.bodyTextColor,
                         fontSize: FontSizes.titleFontSize,
@@ -83,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Log into your account using one of the options below.',
+                      AppTexts.loginText,
                       style: TextStyle(
                         color: AppColors.bodyTextColor,
                         fontSize: FontSizes.bodyFontSize,
