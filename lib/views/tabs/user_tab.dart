@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/views/screens/post_details_screen.dart';
 
 class UserTab extends StatelessWidget {
   const UserTab({super.key, required this.posts});
@@ -37,7 +37,16 @@ class UserTab extends StatelessWidget {
           ),
           itemBuilder: (_, int index) {
             return InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PostDetailsScreen(
+                      post: posts[index],
+                    ),
+                  ),
+                );
+              },
               child: GridTile(
                 child: Image.file(
                   File(posts[index].media),

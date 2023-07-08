@@ -10,11 +10,14 @@ class AppColors {
   static const bodyTextColor = Color(0xffc1c1c1);
   static const loginButtonTextColor = Color(0xff2e2a25);
   static const tabIndicatorColor = Color(0xff6a6f70);
+  static const activeFieldColor = Color(0xff61707a);
+  static const activeSwitchColor = Color(0xff92fcdd);
 }
 
 class FontSizes {
   static const titleFontSize = 40.0;
   static const bodyFontSize = 16.0;
+  static const subtitleFontSize = 14.0;
 }
 
 class AppTexts {
@@ -22,4 +25,9 @@ class AppTexts {
   static const titleText = 'Welcome to Instant-gram!';
   static const loginText =
       'Log into your account using one of the options below.';
+  static const descFieldText = 'Please write your message here';
+  static const allowLikeText =
+      'By allowing likes, users will be able to press the like button on your post';
+  static const allowCommentText =
+      'By allowing comments, users will be able to comment on your post';
 }
