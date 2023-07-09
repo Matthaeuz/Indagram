@@ -8,6 +8,7 @@ import 'package:indagram/views/widgets/google_button.dart';
 
 import 'package:indagram/helpers/auth/google_login.dart';
 import 'package:indagram/helpers/auth/github_login.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -85,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
+                            builder: (context) => const HomeScreen(),
                           ),
                         );
                       }

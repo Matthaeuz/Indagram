@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
+// import 'package:indagram/state/helpers/post_helpers.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/screens/new_post_screen.dart';
 import 'package:indagram/views/tabs/home_tab.dart';
@@ -13,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final imageProvider = Provider<List<String>>((ref) => []);
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key,});
 
   @override
   // State<HomeScreen> createState() => _HomeScreenState();
@@ -22,16 +24,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 final picker = ImagePicker();
 
+
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   // temporary state management
   List<Post> userPosts = [];
-
-  void addPost(Post newPost) {
-    setState(() {
-      userPosts = [...userPosts, newPost];
-    });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -71,7 +68,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   MaterialPageRoute(
                     builder: (_) => NewPostScreen(
                       media: videoFile.path,
-                      addPost: addPost,
                       isImage: false,
                     ),
                   ),
@@ -114,7 +110,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   MaterialPageRoute(
                     builder: (_) => NewPostScreen(
                       media: imageFile.path,
-                      addPost: addPost,
                       isImage: true,
                     ),
                   ),
@@ -147,7 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         body: TabBarView(
           children: [
-            UserTab(posts: userPosts),
+            UserTab(), // not sure if we add const since it is a consumer widget
             SearchTab(posts: userPosts),
             HomeTab(posts: userPosts),
           ],
