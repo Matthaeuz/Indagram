@@ -4,12 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/views/widgets/video_thumb.dart';
 
 class NewPostScreen extends StatefulWidget {
-  const NewPostScreen({super.key, required this.media, required this.addPost});
+  const NewPostScreen({
+    super.key,
+    required this.media,
+    required this.addPost,
+    required this.isImage,
+  });
 
   final String media;
   final void Function(Post) addPost;
+  final bool isImage;
 
   @override
   State<NewPostScreen> createState() => _NewPostScreenState();
@@ -40,11 +47,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
           IconButton(
             onPressed: () {
               widget.addPost(Post(
-                1,
-                widget.media,
-                descriptionController.text,
-                isLikeAllowed,
-                isCommentAllowed,
+                postId: 1,
+                media: widget.media,
+                description: descriptionController.text,
+                isLikeAllowed: isLikeAllowed,
+                isCommentAllowed: isCommentAllowed,
+                isImage: widget.isImage,
               ));
               Navigator.of(context).pop();
             },
@@ -63,10 +71,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
           slivers: [
             SliverList(
               delegate: SliverChildListDelegate([
-                Image.file(
-                  File(widget.media),
-                  fit: BoxFit.cover,
-                ),
+                widget.isImage
+                    ? Image.file(
+                        File(widget.media),
+                        fit: BoxFit.cover,
+                      )
+                    : VideoThumb(video: widget.media),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
