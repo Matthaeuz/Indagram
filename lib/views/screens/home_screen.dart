@@ -8,16 +8,21 @@ import 'package:indagram/views/tabs/home_tab.dart';
 import 'package:indagram/views/tabs/search_tab.dart';
 import 'package:indagram/views/tabs/user_tab.dart';
 
-class HomeScreen extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final imageProvider = Provider<List<String>>((ref) => []);
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  // State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 final picker = ImagePicker();
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   // temporary state management
   List<Post> userPosts = [];
 
@@ -50,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColors.appBarFgColor,
               ),
             ),
+            // Gallery Icon
             IconButton(
               onPressed: () async {
                 showDialog(
@@ -64,10 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 final XFile? imageFile =
                     await picker.pickImage(source: ImageSource.gallery);
                 if (imageFile == null) {
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   return;
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
+
+                // ignore: use_build_context_synchronously
+                final List<String> images = ref.watch(imageProvider);
+                images.add(imageFile.path);
+
+                // ignore: use_build_context_synchronously
                 Navigator.push(
                   context,
                   MaterialPageRoute(
