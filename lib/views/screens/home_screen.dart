@@ -44,7 +44,34 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: AppColors.appBarColor,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
+                final XFile? videoFile =
+                    await picker.pickVideo(source: ImageSource.gallery);
+                if (videoFile == null) {
+                  Navigator.of(context).pop();
+                  return;
+                }
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NewPostScreen(
+                      media: videoFile.path,
+                      addPost: addPost,
+                      isImage: false,
+                    ),
+                  ),
+                );
+              },
               icon: const FaIcon(
                 FontAwesomeIcons.film,
                 color: AppColors.appBarFgColor,
@@ -74,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (_) => NewPostScreen(
                       media: imageFile.path,
                       addPost: addPost,
+                      isImage: true,
                     ),
                   ),
                 );

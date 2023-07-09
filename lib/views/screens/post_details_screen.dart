@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
+import 'package:indagram/views/widgets/video_post.dart';
 
 class PostDetailsScreen extends StatefulWidget {
   const PostDetailsScreen({super.key, required this.post});
@@ -57,10 +58,12 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
           slivers: [
             SliverList(
               delegate: SliverChildListDelegate([
-                Image.file(
-                  File(widget.post.media),
-                  fit: BoxFit.cover,
-                ),
+                widget.post.isImage
+                    ? Image.file(
+                        File(widget.post.media),
+                        fit: BoxFit.cover,
+                      )
+                    : VideoPost(video: widget.post.media),
                 Row(
                   children: [
                     widget.post.isLikeAllowed

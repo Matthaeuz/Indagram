@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/screens/post_details_screen.dart';
+import 'package:indagram/views/widgets/video_thumb.dart';
 
 class UserTab extends StatelessWidget {
   const UserTab({super.key, required this.posts});
@@ -48,10 +49,12 @@ class UserTab extends StatelessWidget {
                 );
               },
               child: GridTile(
-                child: Image.file(
-                  File(posts[index].media),
-                  fit: BoxFit.cover,
-                ),
+                child: posts[index].isImage
+                    ? Image.file(
+                        File(posts[index].media),
+                        fit: BoxFit.cover,
+                      )
+                    : VideoThumb(video: posts[index].media),
               ),
             );
           }),
