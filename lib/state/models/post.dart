@@ -35,6 +35,17 @@ class Post {
         createdAt = json['createdAt'] as Timestamp,
         userId = json['userId'] as String;
 
+  //  reset a post instance
+  Post.base()
+      : postId = '',
+        media = '',
+        description = '',
+        isLikeAllowed = false,
+        isCommentAllowed = false,
+        isImage = false,
+        createdAt = Timestamp.now(),
+        userId = '';
+
   Map<String, dynamic> toJson() {
     return {
       'media': media,

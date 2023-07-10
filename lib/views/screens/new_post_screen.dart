@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -55,18 +56,27 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              Post newPost = Post(
-                postId: "",
-                media: widget.media,
-                description: descriptionController.text,
-                isLikeAllowed: isLikeAllowed,
-                isCommentAllowed: isCommentAllowed,
-                isImage: widget.isImage,
-                createdAt: Timestamp.fromDate(DateTime.now()),
-                userId: authDetails.userId,
-              );
-              // add new post infirestore
+              // upload image to storage
+              String filePath = widget.media;
+              File fileToUpload = File(filePath);
+              final storageInstance = FirebaseStorage.instance.ref();
+              // add new post in firestore
               try {
+                //upload file and pass the download link referenced by firebase storage into a post class
+                final fileSetter = await storageInstance
+                    .child('media/${DateTime.now()}.jpg')
+                    .putFile(fileToUpload);
+                final String media = await fileSetter.ref.getDownloadURL();
+                Post newPost = Post(
+                  postId: "",
+                  media: media,
+                  description: descriptionController.text,
+                  isLikeAllowed: isLikeAllowed,
+                  isCommentAllowed: isCommentAllowed,
+                  isImage: widget.isImage,
+                  createdAt: Timestamp.fromDate(DateTime.now()),
+                  userId: authDetails.userId,
+                );
                 await FirebaseFirestore.instance
                     .collection('posts')
                     .doc()
@@ -77,7 +87,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                 debugPrint(e.toString());
               } finally {
                 Navigator.of(context).pop();
-              }       
+              }
             },
             icon: const FaIcon(
               Icons.send,
