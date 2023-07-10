@@ -94,6 +94,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     .set(newPost.toJson());
                 // ignore: unused_result
                 ref.refresh(userPostsProvider);
+                // ignore: unused_result
                 ref.refresh(allPostsProvider);
               } catch (e) {
                 debugPrint(e.toString());
