@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
-import 'package:indagram/state/models/post.dart';
 
 class SearchTab extends StatelessWidget {
-  const SearchTab({super.key, required this.posts});
-
-  final List<Post> posts;
+  const SearchTab({super.key});
 
   @override
   Widget build(BuildContext context) {
