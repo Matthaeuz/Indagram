@@ -124,9 +124,7 @@ class _SearchTabState extends State<SearchTab> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PostDetailsScreen(
-                              post: post,
-                            ),
+                            builder: (context) => const PostDetailsScreen(),
                           ),
                         );
                       },
