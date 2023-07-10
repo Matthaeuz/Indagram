@@ -37,4 +37,5 @@ class AppTexts {
       'Nobody has commented on this post yet. You can change that though, and be the first person who comments!';
   static const deleteCommentText =
       'Are you sure you want to delete this comment?';
+  static const logOutText = 'Are you sure you want to log out of the app?';
 }

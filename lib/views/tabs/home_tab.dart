@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
-import 'package:indagram/state/models/post.dart';
 
 class HomeTab extends StatelessWidget {
-  const HomeTab({super.key, required this.posts});
-
-  final List<Post> posts;
+  const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {

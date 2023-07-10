@@ -1,16 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
 // import 'package:indagram/state/helpers/post_helpers.dart';
-import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/screens/new_post_screen.dart';
 import 'package:indagram/views/tabs/home_tab.dart';
 import 'package:indagram/views/tabs/search_tab.dart';
 import 'package:indagram/views/tabs/user_tab.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:indagram/views/widgets/custom_dialog.dart';
 
 final imageProvider = Provider<List<String>>((ref) => []);
 
@@ -27,8 +26,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 final picker = ImagePicker();
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  // temporary state management
-  List<Post> userPosts = [];
+  Future<dynamic> displayLogOutDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Log Out',
+          subtitle: AppTexts.logOutText,
+          action: 'Log out',
+          onSubmit: () {},
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +134,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                displayLogOutDialog(context);
+              },
               icon: const FaIcon(
                 Icons.logout,
                 color: AppColors.appBarFgColor,
@@ -145,8 +158,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         body: TabBarView(
           children: [
             UserTab(), // not sure if we add const since it is a consumer widget
-            SearchTab(posts: userPosts),
-            HomeTab(posts: userPosts),
+            SearchTab(),
+            HomeTab(),
           ],
         ),
       ),
