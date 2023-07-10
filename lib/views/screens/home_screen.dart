@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
-// import 'package:indagram/state/helpers/post_helpers.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/screens/new_post_screen.dart';
 import 'package:indagram/views/tabs/home_tab.dart';

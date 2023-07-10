@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:indagram/constants.dart';
-// import 'package:indagram/state/helpers/post_helpers.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';
 
 class NewPostScreen extends ConsumerStatefulWidget {
@@ -36,6 +36,8 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authDetails = ref.watch(authDetailsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -54,12 +56,14 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
           IconButton(
             onPressed: () async {
               Post newPost = Post(
-                postId: "1",
+                postId: "",
                 media: widget.media,
                 description: descriptionController.text,
                 isLikeAllowed: isLikeAllowed,
                 isCommentAllowed: isCommentAllowed,
                 isImage: widget.isImage,
+                createdAt: Timestamp.fromDate(DateTime.now()),
+                userId: authDetails.userId,
               );
               // add new post infirestore
               try {
@@ -67,6 +71,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     .collection('posts')
                     .doc()
                     .set(newPost.toJson());
+                // ignore: unused_result
                 ref.refresh(userPostsProvider);
               } catch (e) {
                 debugPrint(e.toString());

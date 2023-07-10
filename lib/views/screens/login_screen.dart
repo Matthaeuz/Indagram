@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 
 import 'package:indagram/views/screens/home_screen.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
@@ -9,16 +11,18 @@ import 'package:indagram/views/widgets/google_button.dart';
 import 'package:indagram/helpers/auth/google_login.dart';
 import 'package:indagram/helpers/auth/github_login.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final auth = ref.watch(authDetailsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -65,8 +69,33 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   TextButton(
-                    onPressed: () {
-                      google_signin(context);
+                    onPressed: () async {
+                      final user = await google_signin(context);
+
+                      debugPrint('google login: $user');
+
+                      if (user != null) {
+                        // save google auth credentials to provider
+                        var displayName = user
+                                .additionalUserInfo?.profile?['given_name'] +
+                            ' ' +
+                            user.additionalUserInfo?.profile?['family_name'];
+
+                        ref.read(authDetailsProvider.notifier).updateUser(
+                              displayName,
+                              user.additionalUserInfo?.profile?['id'],
+                              user.additionalUserInfo?.profile?['email'],
+                            );
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        // was not able to sign in; throw an error
+                      }
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: AppColors.loginButtonColor,
@@ -81,8 +110,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextButton(
                     onPressed: () async {
                       final user = await signInWithGitHub();
-
+                      debugPrint('$user');
                       if (user != null) {
+                        // save userdetails in authprovider
+                        ref.read(authDetailsProvider.notifier).updateUser(
+                              user.additionalUserInfo?.profile?['login'],
+                              user.additionalUserInfo?.profile?['id'],
+                              user.additionalUserInfo?.profile?['email'],
+                            );
+
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

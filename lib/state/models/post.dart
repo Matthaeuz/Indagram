@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Post {
   Post({
     required this.postId,
@@ -6,6 +8,8 @@ class Post {
     required this.isLikeAllowed,
     required this.isCommentAllowed,
     required this.isImage,
+    required this.createdAt,
+    required this.userId,
   });
 
   final String postId;
@@ -14,6 +18,8 @@ class Post {
   bool isLikeAllowed;
   bool isCommentAllowed;
   bool isImage;
+  final Timestamp createdAt;
+  final String userId;
 
   // constructor that unpacks doc.data()
   Post.fromJson({
@@ -25,16 +31,19 @@ class Post {
             json['isLikeAllowed'] as bool? ?? false, // added null safety
         isCommentAllowed =
             json['isCommentAllowed'] as bool? ?? false, // added null safety
-        isImage = json['isImage'] as bool;
+        isImage = json['isImage'] as bool,
+        createdAt = json['createdAt'] as Timestamp,
+        userId = json['userId'] as String;
 
   Map<String, dynamic> toJson() {
     return {
-      'postId': postId,
       'media': media,
       'description': description,
       'isLikeAllowed': isLikeAllowed,
       'isCommentAllowed': isCommentAllowed,
       'isImage': isImage,
+      'createdAt': Timestamp.fromDate(DateTime.now()),
+      'userId': userId,
     };
   }
 }

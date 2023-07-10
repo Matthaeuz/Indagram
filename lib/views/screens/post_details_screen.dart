@@ -1,24 +1,30 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/video_post.dart';
+import 'package:intl/intl.dart';
 
-class PostDetailsScreen extends StatefulWidget {
+class PostDetailsScreen extends ConsumerStatefulWidget {
   const PostDetailsScreen({super.key, required this.post});
 
   final Post post;
 
   @override
-  State<PostDetailsScreen> createState() => _PostDetailsScreenState();
+  ConsumerState<PostDetailsScreen> createState() => _PostDetailsScreenState();
 }
 
-class _PostDetailsScreenState extends State<PostDetailsScreen> {
+class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    final authDetails = ref.watch(authDetailsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -93,7 +99,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                       Flexible(
                         child: RichText(
                           text: TextSpan(
-                            text: 'User ',
+                            text: '${authDetails.displayName} ',
                             style: const TextStyle(
                               color: AppColors.bodyTextColor,
                               fontSize: FontSizes.subtitleFontSize,
@@ -120,9 +126,9 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '1 Jan 2023, 12:01 AM',
-                        style: TextStyle(
+                      Text(
+                        DateFormat('d MMM y, h:mm a').format(widget.post.createdAt.toDate()),
+                        style: const TextStyle(
                           color: AppColors.bodyTextColor,
                           fontSize: FontSizes.subtitleFontSize,
                           fontWeight: FontWeight.w800,
