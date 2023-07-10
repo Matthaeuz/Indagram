@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/state/models/comment.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/all_posts_provider.dart';
 // import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/current_post_provider.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
+import 'package:indagram/views/screens/comment_screen.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/video_post.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +26,27 @@ class PostDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
+  List<Comment> comments = [];
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    comments = List.from(widget.post.comments);
+  }
+
+  void addComment(Comment comment) {
+    setState(() {
+      comments.add(comment);
+    });
+  }
+
+  void deleteComment(int index) {
+    setState(() {
+      comments.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final authDetails = ref.watch(authDetailsProvider);
@@ -31,6 +54,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
     final posts = ref.watch(allPostsProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.bodyColor,
       appBar: AppBar(
         title: const Text(
           'Post Details',
@@ -94,39 +118,55 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
               ),
             )
           : Container(
-              color: AppColors.bodyColor,
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      post.isImage
-                          ? Image.network(
-                              post.media,
-                              fit: BoxFit.cover,
-                            )
-                          : VideoPost(video: post.media),
-                      Row(
-                        children: [
-                          post.isLikeAllowed
-                              ? IconButton(
-                                  onPressed: () {},
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.heart,
-                                    color: AppColors.appBarFgColor,
+        color: AppColors.bodyColor,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverList(
+              delegate: SliverChildListDelegate([
+                widget.post.isImage
+                    ? Image.file(
+                        File(widget.post.media),
+                        fit: BoxFit.cover,
+                      )
+                    : VideoPost(video: widget.post.media),
+                Row(
+                  children: [
+                    widget.post.isLikeAllowed
+                        ? IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isLiked = !isLiked;
+                              });
+                            },
+                            icon: FaIcon(
+                              isLiked
+                                  ? FontAwesomeIcons.solidHeart
+                                  : FontAwesomeIcons.heart,
+                              color: AppColors.appBarFgColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                    widget.post.isCommentAllowed
+                        ? IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CommentScreen(
+                                    comments: comments,
+                                    addComment: addComment,
+                                    deleteComment: deleteComment,
                                   ),
-                                )
-                              : const SizedBox(),
-                          post.isCommentAllowed
-                              ? IconButton(
-                                  onPressed: () {},
-                                  icon: const FaIcon(
-                                    Icons.mode_comment_outlined,
-                                    color: AppColors.appBarFgColor,
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ],
+                                ),
+                              );
+                            },
+                            icon: const FaIcon(
+                              Icons.mode_comment_outlined,
+                              color: AppColors.appBarFgColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -180,8 +220,36 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                                       fontSize: FontSizes.subtitleFontSize,
                                       fontWeight: FontWeight.w800,
                                     ),
-                                  )
-                                : const SizedBox(),
+                                 )
+                          : const SizedBox(),
+                      widget.post.isCommentAllowed && comments.isNotEmpty
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              itemCount:
+                                  comments.length > 3 ? 3 : comments.length,
+                              itemBuilder: (context, index) {
+                                return RichText(
+                                  text: TextSpan(
+                                    text: 'User ',
+                                    style: const TextStyle(
+                                      children: [
+                                      TextSpan(
+                                        text: comments[index].comment,
+                                        style: const TextStyle(
+                                          color: AppColors.bodyTextColor,
+                                          fontSize: FontSizes.subtitleFontSize,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          : const SizedBox(),
                           ],
                         ),
                       ),

@@ -9,6 +9,7 @@ import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
+import 'package:indagram/views/widgets/loading_overlay.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';
 
 class NewPostScreen extends ConsumerStatefulWidget {
@@ -40,6 +41,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
     final authDetails = ref.watch(authDetailsProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.bodyColor,
       appBar: AppBar(
         title: const Text(
           'Create New Post',
@@ -61,6 +63,14 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
               File fileToUpload = File(filePath);
               final storageInstance = FirebaseStorage.instance.ref();
               // add new post in firestore
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return const LoadingOverlay();
+                },
+              );
+              // add new post infirestore
               try {
                 //upload file and pass the download link referenced by firebase storage into a post class
                 final fileSetter = await storageInstance
@@ -114,6 +124,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     controller: descriptionController,
+                    cursorColor: AppColors.activeFieldColor,
                     style: const TextStyle(
                       color: AppColors.appBarFgColor,
                       fontSize: FontSizes.bodyFontSize,
@@ -121,6 +132,9 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     decoration: const InputDecoration(
                       labelText: AppTexts.descFieldText,
                       labelStyle: TextStyle(
+                        color: AppColors.tabIndicatorColor,
+                      ),
+                      floatingLabelStyle: TextStyle(
                         color: AppColors.activeFieldColor,
                       ),
                       focusedBorder: UnderlineInputBorder(

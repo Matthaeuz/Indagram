@@ -9,11 +9,15 @@ import 'package:indagram/views/tabs/search_tab.dart';
 import 'package:indagram/views/tabs/user_tab.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:indagram/views/widgets/custom_dialog.dart';
+import 'package:indagram/views/widgets/loading_overlay.dart';
 
 final imageProvider = Provider<List<String>>((ref) => []);
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key,});
+  const HomeScreen({
+    super.key,
+  });
 
   @override
   // State<HomeScreen> createState() => _HomeScreenState();
@@ -22,16 +26,28 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 final picker = ImagePicker();
 
-
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  // temporary state management
-  List<Post> userPosts = [];
-  
+  Future<dynamic> displayLogOutDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Log Out',
+          subtitle: AppTexts.logOutText,
+          action: 'Log out',
+          onSubmit: () {},
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.bodyColor,
         appBar: AppBar(
           title: const Text(
             AppTexts.appBarText,
@@ -49,9 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const LoadingOverlay();
                   },
                 );
                 final XFile? videoFile =
@@ -83,9 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const LoadingOverlay();
                   },
                 );
                 final XFile? imageFile =
@@ -119,7 +131,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                displayLogOutDialog(context);
+              },
               icon: const FaIcon(
                 Icons.logout,
                 color: AppColors.appBarFgColor,
@@ -141,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         body: TabBarView(
           children: [
             UserTab(), // not sure if we add const since it is a consumer widget
-            SearchTab(posts: userPosts),
+            SearchTab(),
             HomeTab(),
           ],
         ),
