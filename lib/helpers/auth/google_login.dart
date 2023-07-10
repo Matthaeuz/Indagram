@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<void> google_signin(BuildContext context) async {
+  Future<UserCredential?> google_signin(BuildContext context) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
@@ -19,16 +19,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
           accessToken: googleSignInAuthentication.accessToken);
 
       // Getting users credential
-      UserCredential result = await auth.signInWithCredential(authCredential);
-      User? user = result.user;
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
-      }
+      return await auth.signInWithCredential(authCredential);
     }
+    return null;
   }

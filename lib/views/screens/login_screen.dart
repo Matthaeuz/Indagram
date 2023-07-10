@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/state/helpers/auth_helpers.dart';
+import 'package:indagram/state/models/user.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 
 import 'package:indagram/views/screens/home_screen.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
@@ -9,14 +14,14 @@ import 'package:indagram/views/widgets/google_button.dart';
 import 'package:indagram/helpers/auth/google_login.dart';
 import 'package:indagram/helpers/auth/github_login.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,8 +71,46 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   TextButton(
-                    onPressed: () {
-                      google_signin(context);
+                    onPressed: () async {
+                      final user = await google_signin(context);
+
+                      debugPrint('google login: $user');
+
+                      if (user != null) {
+                        // save google auth credentials to provider
+                        var displayName = user
+                                .additionalUserInfo?.profile?['given_name'] +
+                            ' ' +
+                            user.additionalUserInfo?.profile?['family_name'];
+
+                        User newUser = User(
+                          displayName: displayName,
+                          userId: user.additionalUserInfo?.profile?['id'],
+                          email: user.additionalUserInfo?.profile?['email'],
+                        );
+
+                        ref
+                            .read(authDetailsProvider.notifier)
+                            .updateUser(newUser);
+
+                        // if user doesn't exist, add to firestore, skip otherwise
+                        if (await checkIfUserExists(
+                            user.additionalUserInfo?.profile?['id'])) {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc()
+                              .set(newUser.toJson());
+                        }
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        // was not able to sign in; throw an error
+                      }
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: AppColors.loginButtonColor,
@@ -82,14 +125,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextButton(
                     onPressed: () async {
                       final user = await signInWithGitHub();
-
+                      final id =
+                          user.additionalUserInfo!.profile!['id'].toString();
+                      debugPrint(
+                          'details: ${user.additionalUserInfo?.profile?['login']}, ${user.additionalUserInfo?.profile?['id']}, ${user.additionalUserInfo?.profile?['email']},');
                       if (user != null) {
+                        User newUser = User(
+                          displayName:
+                              user.additionalUserInfo?.profile?['login'],
+                          userId: id,
+                          email: user.additionalUserInfo?.profile?['email'],
+                        );
+
+                        // save userdetails in authprovider
+                        ref
+                            .read(authDetailsProvider.notifier)
+                            .updateUser(newUser);
+
+                        // if user doesn't exist, add to firestore, skip otherwise
+                        if (await checkIfUserExists(id)) {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc()
+                              .set(newUser.toJson());
+                        }
+
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const HomeScreen(),
                           ),
                         );
+                      } else {
+                        // throw an error
                       }
                     },
                     style: TextButton.styleFrom(

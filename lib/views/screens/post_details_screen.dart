@@ -1,24 +1,31 @@
 import 'dart:io';
 
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/comment.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/state/providers/posts/all_posts_provider.dart';
+// import 'package:indagram/state/models/post.dart';
+import 'package:indagram/state/providers/posts/current_post_provider.dart';
+import 'package:indagram/state/providers/posts/user_posts_provider.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/screens/comment_screen.dart';
 import 'package:indagram/views/widgets/app_divider.dart';
 import 'package:indagram/views/widgets/video_post.dart';
+import 'package:intl/intl.dart';
 
-class PostDetailsScreen extends StatefulWidget {
-  const PostDetailsScreen({super.key, required this.post});
-
-  final Post post;
+class PostDetailsScreen extends ConsumerStatefulWidget {
+  const PostDetailsScreen({super.key});
 
   @override
-  State<PostDetailsScreen> createState() => _PostDetailsScreenState();
+  ConsumerState<PostDetailsScreen> createState() => _PostDetailsScreenState();
 }
 
-class _PostDetailsScreenState extends State<PostDetailsScreen> {
+class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
   List<Comment> comments = [];
   bool isLiked = false;
 
@@ -42,6 +49,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authDetails = ref.watch(authDetailsProvider);
+    final post = ref.watch(currentPostProvider);
+    final posts = ref.watch(allPostsProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bodyColor,
       appBar: AppBar(
@@ -65,17 +76,48 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
               color: AppColors.appBarFgColor,
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const FaIcon(
-              Icons.delete,
-              size: 20.0,
-              color: AppColors.appBarFgColor,
-            ),
-          ),
+          authDetails.userId == post.userId
+              ? IconButton(
+                  onPressed: () async {
+                    try {
+                      await FirebaseFirestore.instance
+                          .collection('posts')
+                          .doc(post.postId)
+                          .delete();
+
+                      //if was able to delete firestore let provider know
+                      ref
+                          .read(currentPostProvider.notifier)
+                          .updateCurrentPost(Post.base());
+
+                      ref.refresh(allPostsProvider);
+                      ref.refresh(userPostsProvider);
+                    } catch (e) {
+                      debugPrint(e.toString());
+                    }
+                  },
+                  icon: const FaIcon(
+                    Icons.delete,
+                    size: 20.0,
+                    color: AppColors.appBarFgColor,
+                  ),
+                )
+              : const SizedBox()
         ],
       ),
-      body: Container(
+      body: post.postId == ''
+          ? Container(
+              color: AppColors.bodyColor,
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                'Something wrong happened. This post may be missing.',
+                style: TextStyle(
+                  color: AppColors.bodyTextColor,
+                  fontSize: FontSizes.bodyFontSize,
+                ),
+              ),
+            )
+          : Container(
         color: AppColors.bodyColor,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -125,59 +167,60 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           )
                         : const SizedBox(),
                   ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'User ',
-                            style: const TextStyle(
-                              color: AppColors.bodyTextColor,
-                              fontSize: FontSizes.subtitleFontSize,
-                              fontWeight: FontWeight.w800,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: widget.post.description,
-                                style: const TextStyle(
-                                  color: AppColors.bodyTextColor,
-                                  fontSize: FontSizes.subtitleFontSize,
-                                  fontWeight: FontWeight.w400,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: RichText(
+                                text: TextSpan(
+                                  text: '${authDetails.displayName} ',
+                                  style: const TextStyle(
+                                    color: AppColors.bodyTextColor,
+                                    fontSize: FontSizes.subtitleFontSize,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: post.description,
+                                      style: const TextStyle(
+                                        color: AppColors.bodyTextColor,
+                                        fontSize: FontSizes.subtitleFontSize,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '1 Jan 2023, 12:01 AM',
-                        style: TextStyle(
-                          color: AppColors.bodyTextColor,
-                          fontSize: FontSizes.subtitleFontSize,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const AppDivider(padding: 8.0),
-                      widget.post.isLikeAllowed
-                          ? const Text(
-                              '0 people liked this',
-                              style: TextStyle(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              DateFormat('d MMM y, h:mm a')
+                                  .format(post.createdAt.toDate()),
+                              style: const TextStyle(
                                 color: AppColors.bodyTextColor,
                                 fontSize: FontSizes.subtitleFontSize,
                                 fontWeight: FontWeight.w800,
                               ),
-                            )
+                            ),
+                            const AppDivider(padding: 8.0),
+                            post.isLikeAllowed
+                                ? const Text(
+                                    '0 people liked this',
+                                    style: TextStyle(
+                                      color: AppColors.bodyTextColor,
+                                      fontSize: FontSizes.subtitleFontSize,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                 )
                           : const SizedBox(),
                       widget.post.isCommentAllowed && comments.isNotEmpty
                           ? ListView.builder(
@@ -192,11 +235,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                   text: TextSpan(
                                     text: 'User ',
                                     style: const TextStyle(
-                                      color: AppColors.bodyTextColor,
-                                      fontSize: FontSizes.subtitleFontSize,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    children: [
+                                      children: [
                                       TextSpan(
                                         text: comments[index].comment,
                                         style: const TextStyle(
@@ -211,14 +250,14 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                               },
                             )
                           : const SizedBox(),
-                    ],
+                          ],
+                        ),
+                      ),
+                    ]),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

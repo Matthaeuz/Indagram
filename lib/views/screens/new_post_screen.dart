@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:indagram/constants.dart';
-// import 'package:indagram/state/helpers/post_helpers.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/widgets/loading_overlay.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';
 
@@ -37,6 +38,8 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authDetails = ref.watch(authDetailsProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bodyColor,
       appBar: AppBar(
@@ -55,6 +58,11 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
         actions: [
           IconButton(
             onPressed: () async {
+              // upload image to storage
+              String filePath = widget.media;
+              File fileToUpload = File(filePath);
+              final storageInstance = FirebaseStorage.instance.ref();
+              // add new post in firestore
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -62,20 +70,28 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                   return const LoadingOverlay();
                 },
               );
-              Post newPost = Post(
-                postId: "1",
-                media: widget.media,
-                description: descriptionController.text,
-                isLikeAllowed: isLikeAllowed,
-                isCommentAllowed: isCommentAllowed,
-                isImage: widget.isImage,
-              );
               // add new post infirestore
               try {
+                //upload file and pass the download link referenced by firebase storage into a post class
+                final fileSetter = await storageInstance
+                    .child('media/${DateTime.now()}.jpg')
+                    .putFile(fileToUpload);
+                final String media = await fileSetter.ref.getDownloadURL();
+                Post newPost = Post(
+                  postId: "",
+                  media: media,
+                  description: descriptionController.text,
+                  isLikeAllowed: isLikeAllowed,
+                  isCommentAllowed: isCommentAllowed,
+                  isImage: widget.isImage,
+                  createdAt: Timestamp.fromDate(DateTime.now()),
+                  userId: authDetails.userId,
+                );
                 await FirebaseFirestore.instance
                     .collection('posts')
                     .doc()
                     .set(newPost.toJson());
+                // ignore: unused_result
                 ref.refresh(userPostsProvider);
               } catch (e) {
                 debugPrint(e.toString());
