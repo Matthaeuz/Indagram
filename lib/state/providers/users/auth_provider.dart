@@ -4,11 +4,11 @@ import 'package:indagram/state/models/user.dart';
 class AuthDetailsNotifier extends StateNotifier<User> {
   AuthDetailsNotifier(User user) : super(user);
 
-  void updateUser(String newDisplayName, String newUserId, String newEmail) {
+  void updateUser(User newUser) {
     state = User(
-      displayName: newDisplayName,
-      userId: newUserId,
-      email: newEmail,
+      displayName: newUser.displayName,
+      userId: newUser.userId,
+      email: newUser.email,
     );
   }
 }

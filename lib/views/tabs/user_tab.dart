@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
-// import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/views/screens/post_details_screen.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';

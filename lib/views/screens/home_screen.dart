@@ -142,7 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             UserTab(), // not sure if we add const since it is a consumer widget
             SearchTab(posts: userPosts),
-            HomeTab(posts: userPosts),
+            HomeTab(),
           ],
         ),
       ),

@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/state/helpers/auth_helpers.dart';
+import 'package:indagram/state/models/user.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
 
 import 'package:indagram/views/screens/home_screen.dart';
@@ -21,8 +24,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authDetailsProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -81,11 +82,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ' ' +
                             user.additionalUserInfo?.profile?['family_name'];
 
-                        ref.read(authDetailsProvider.notifier).updateUser(
-                              displayName,
-                              user.additionalUserInfo?.profile?['id'],
-                              user.additionalUserInfo?.profile?['email'],
-                            );
+                        User newUser = User(
+                          displayName: displayName,
+                          userId: user.additionalUserInfo?.profile?['id'],
+                          email: user.additionalUserInfo?.profile?['email'],
+                        );
+
+                        ref
+                            .read(authDetailsProvider.notifier)
+                            .updateUser(newUser);
+
+                        // if user doesn't exist, add to firestore, skip otherwise
+                        if (await checkIfUserExists(
+                            user.additionalUserInfo?.profile?['id'])) {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc()
+                              .set(newUser.toJson());
+                        }
 
                         Navigator.pushReplacement(
                           context,
@@ -110,14 +124,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextButton(
                     onPressed: () async {
                       final user = await signInWithGitHub();
-                      debugPrint('$user');
+                      final id =
+                          user.additionalUserInfo!.profile!['id'].toString();
+                      debugPrint(
+                          'details: ${user.additionalUserInfo?.profile?['login']}, ${user.additionalUserInfo?.profile?['id']}, ${user.additionalUserInfo?.profile?['email']},');
                       if (user != null) {
-                        // save userdetails in authprovider
-                        ref.read(authDetailsProvider.notifier).updateUser(
+                        User newUser = User(
+                          displayName:
                               user.additionalUserInfo?.profile?['login'],
-                              user.additionalUserInfo?.profile?['id'],
-                              user.additionalUserInfo?.profile?['email'],
-                            );
+                          userId: id,
+                          email: user.additionalUserInfo?.profile?['email'],
+                        );
+
+                        // save userdetails in authprovider
+                        ref
+                            .read(authDetailsProvider.notifier)
+                            .updateUser(newUser);
+
+                        // if user doesn't exist, add to firestore, skip otherwise
+                        if (await checkIfUserExists(id)) {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc()
+                              .set(newUser.toJson());
+                        }
 
                         Navigator.pushReplacement(
                           context,
@@ -125,6 +155,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             builder: (context) => const HomeScreen(),
                           ),
                         );
+                      } else {
+                        // throw an error
                       }
                     },
                     style: TextButton.styleFrom(
