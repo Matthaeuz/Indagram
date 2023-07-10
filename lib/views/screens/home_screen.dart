@@ -10,6 +10,7 @@ import 'package:indagram/views/tabs/user_tab.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/views/widgets/custom_dialog.dart';
+import 'package:indagram/views/widgets/loading_overlay.dart';
 
 final imageProvider = Provider<List<String>>((ref) => []);
 
@@ -64,9 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const LoadingOverlay();
                   },
                 );
                 final XFile? videoFile =
@@ -98,9 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const LoadingOverlay();
                   },
                 );
                 final XFile? imageFile =

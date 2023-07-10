@@ -13,6 +13,7 @@ class AppColors {
   static const activeFieldColor = Color(0xff61707a);
   static const activeSwitchColor = Color(0xff92fcdd);
   static const noneColor = Color(0xff9a9a9a);
+  static const loadingColor = Color(0xff70777f);
 }
 
 class FontSizes {

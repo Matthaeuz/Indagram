@@ -20,6 +20,7 @@ class PostDetailsScreen extends StatefulWidget {
 
 class _PostDetailsScreenState extends State<PostDetailsScreen> {
   List<Comment> comments = [];
+  bool isLiked = false;
 
   @override
   void initState() {
@@ -91,9 +92,15 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                   children: [
                     widget.post.isLikeAllowed
                         ? IconButton(
-                            onPressed: () {},
-                            icon: const FaIcon(
-                              FontAwesomeIcons.heart,
+                            onPressed: () {
+                              setState(() {
+                                isLiked = !isLiked;
+                              });
+                            },
+                            icon: FaIcon(
+                              isLiked
+                                  ? FontAwesomeIcons.solidHeart
+                                  : FontAwesomeIcons.heart,
                               color: AppColors.appBarFgColor,
                             ),
                           )

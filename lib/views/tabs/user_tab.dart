@@ -68,9 +68,9 @@ class UserTab extends ConsumerWidget {
       }
     }, error: (error, stackTrace) {
       debugPrint('something happened, $error');
-      return const CircularProgressIndicator();
+      return const CircularProgressIndicator(color: AppColors.bodyTextColor);
     }, loading: () {
-      return const CircularProgressIndicator();
+      return const CircularProgressIndicator(color: AppColors.bodyTextColor);
     });
   }
 }
