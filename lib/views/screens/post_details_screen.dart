@@ -9,6 +9,7 @@ import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/all_posts_provider.dart';
 // import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/current_post_provider.dart';
+import 'package:indagram/state/providers/posts/post_display_name_provider.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/screens/comment_screen.dart';
@@ -44,6 +45,9 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
     final authDetails = ref.watch(authDetailsProvider);
     final post = ref.watch(currentPostProvider);
     final posts = ref.watch(allPostsProvider);
+    final displayName = ref.watch(displayNameProvider(post.userId));
+
+    debugPrint('${posts.value!.any((p) => p.postId == post.postId)}');
 
     return Scaffold(
       backgroundColor: AppColors.bodyColor,
@@ -81,8 +85,9 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                       ref
                           .read(currentPostProvider.notifier)
                           .updateCurrentPost(Post.base());
-
+                      // ignore: unused_result
                       ref.refresh(allPostsProvider);
+                      // ignore: unused_result
                       ref.refresh(userPostsProvider);
                     } catch (e) {
                       debugPrint(e.toString());
@@ -97,7 +102,8 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
               : const SizedBox()
         ],
       ),
-      body: post.postId == ''
+      // check if post is still contained in posts when posts is rebuilt
+      body: !posts.value!.any((p) => p.postId == post.postId)
           ? Container(
               color: AppColors.bodyColor,
               padding: const EdgeInsets.all(8.0),
@@ -167,7 +173,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                             Flexible(
                               child: RichText(
                                 text: TextSpan(
-                                  text: '${authDetails.displayName} ',
+                                  text: '${displayName.value} ',
                                   style: const TextStyle(
                                     color: AppColors.bodyTextColor,
                                     fontSize: FontSizes.subtitleFontSize,
