@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
@@ -34,12 +32,14 @@ class UserTab extends ConsumerWidget {
                 return InkWell(
                   onTap: () {
                     // set current post in provider
-                    ref.read(currentPostProvider.notifier).updateCurrentPost(post);  
-                    
+                    ref
+                        .read(currentPostProvider.notifier)
+                        .updateCurrentPost(post);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PostDetailsScreen(),
+                        builder: (context) => const PostDetailsScreen(),
                       ),
                     );
                   },
@@ -48,6 +48,25 @@ class UserTab extends ConsumerWidget {
                         ? Image.network(
                             post.media,
                             fit: BoxFit.cover,
+                            frameBuilder: (_, image, loadingBuilder, __) {
+                              if (loadingBuilder == null) {
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.bodyTextColor,
+                                  ),
+                                );
+                              }
+                              return image;
+                            },
+                            loadingBuilder: (BuildContext context, Widget image,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return image;
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.bodyTextColor,
+                                ),
+                              );
+                            },
                           )
                         : VideoThumb(video: post.media),
                   ),
