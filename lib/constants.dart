@@ -38,4 +38,7 @@ class AppTexts {
   static const deleteCommentText =
       'Are you sure you want to delete this comment?';
   static const logOutText = 'Are you sure you want to log out of the app?';
+  static const searchFieldText = 'Enter your search term here';
+  static const noSearchedText =
+      'Enter your search term in order to get started. You can search in the description of all posts available in the system';
 }

@@ -63,7 +63,7 @@ class _CommentScreenState extends State<CommentScreen> {
               widget.addComment(newComment);
               setState(() {
                 comments.add(newComment);
-                commentController.text = '';
+                commentController.clear();
               });
             },
             icon: const FaIcon(
