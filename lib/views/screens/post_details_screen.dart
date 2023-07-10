@@ -1,14 +1,16 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: unused_result
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:indagram/constants.dart';
-import 'package:indagram/state/models/comment.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/state/providers/comments/post_comments_provider.dart';
 import 'package:indagram/state/providers/posts/all_posts_provider.dart';
-// import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/current_post_provider.dart';
+import 'package:indagram/state/providers/posts/post_display_name_provider.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/screens/comment_screen.dart';
@@ -24,25 +26,13 @@ class PostDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
-  List<Comment> comments = [];
   bool isLiked = false;
-
-  void addComment(Comment comment) {
-    setState(() {
-      comments.add(comment);
-    });
-  }
-
-  void deleteComment(int index) {
-    setState(() {
-      comments.removeAt(index);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final authDetails = ref.watch(authDetailsProvider);
     final post = ref.watch(currentPostProvider);
+    final postComments = ref.watch(postCommentsProvider);
     final posts = ref.watch(allPostsProvider);
 
     return Scaffold(
@@ -144,11 +134,8 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                                   onPressed: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (context) => CommentScreen(
-                                          comments: comments,
-                                          addComment: addComment,
-                                          deleteComment: deleteComment,
-                                        ),
+                                        builder: (context) =>
+                                            const CommentScreen(),
                                       ),
                                     );
                                   },
@@ -214,41 +201,58 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                                     ),
                                   )
                                 : const SizedBox(),
-                            post.isCommentAllowed && comments.isNotEmpty
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    itemCount: comments.length > 3
-                                        ? 3
-                                        : comments.length,
-                                    itemBuilder: (context, index) {
-                                      return RichText(
-                                        text: TextSpan(
-                                          text: 'User ',
-                                          style: const TextStyle(
-                                            color: AppColors.bodyTextColor,
-                                            fontSize:
-                                                FontSizes.subtitleFontSize,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: comments[index].comment,
+                            post.isCommentAllowed
+                                ? postComments.when(data: (comments) {
+                                    if (comments.isNotEmpty) {
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        itemCount: comments.length > 3
+                                            ? 3
+                                            : comments.length,
+                                        itemBuilder: (context, index) {
+                                          return RichText(
+                                            text: TextSpan(
+                                              text:
+                                                  '${ref.watch(displayNameProvider(comments.elementAt(index).userId)).value} ',
                                               style: const TextStyle(
                                                 color: AppColors.bodyTextColor,
                                                 fontSize:
                                                     FontSizes.subtitleFontSize,
-                                                fontWeight: FontWeight.w400,
+                                                fontWeight: FontWeight.w800,
                                               ),
+                                              children: [
+                                                TextSpan(
+                                                  text: comments
+                                                      .elementAt(index)
+                                                      .comment,
+                                                  style: const TextStyle(
+                                                    color:
+                                                        AppColors.bodyTextColor,
+                                                    fontSize: FontSizes
+                                                        .subtitleFontSize,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  )
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  }, error: (error, stackTrace) {
+                                    debugPrint('something happened, $error');
+                                    return const CircularProgressIndicator(
+                                        color: AppColors.bodyTextColor);
+                                  }, loading: () {
+                                    return const CircularProgressIndicator(
+                                        color: AppColors.bodyTextColor);
+                                  })
                                 : const SizedBox(),
                           ],
                         ),

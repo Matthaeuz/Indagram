@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:indagram/state/models/comment.dart';
 
 class Post {
   Post({
@@ -16,7 +15,6 @@ class Post {
   final String postId;
   final String media;
   final String description;
-//   final List<Comment> comments = [];
   bool isLikeAllowed;
   bool isCommentAllowed;
   bool isImage;

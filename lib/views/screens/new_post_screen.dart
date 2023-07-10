@@ -59,47 +59,50 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              // upload image to storage
-              String filePath = widget.media;
-              File fileToUpload = File(filePath);
-              final storageInstance = FirebaseStorage.instance.ref();
-              // add new post in firestore
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return const LoadingOverlay();
-                },
-              );
-              // add new post infirestore
-              try {
-                //upload file and pass the download link referenced by firebase storage into a post class
-                final fileSetter = await storageInstance
-                    .child('media/${DateTime.now()}.jpg')
-                    .putFile(fileToUpload);
-                final String media = await fileSetter.ref.getDownloadURL();
-                Post newPost = Post(
-                  postId: "",
-                  media: media,
-                  description: descriptionController.text,
-                  isLikeAllowed: isLikeAllowed,
-                  isCommentAllowed: isCommentAllowed,
-                  isImage: widget.isImage,
-                  createdAt: Timestamp.fromDate(DateTime.now()),
-                  userId: authDetails.userId,
+              if (descriptionController.text.isNotEmpty) {
+                // upload image to storage
+                String filePath = widget.media;
+                File fileToUpload = File(filePath);
+                final storageInstance = FirebaseStorage.instance.ref();
+                // add new post in firestore
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return const LoadingOverlay();
+                  },
                 );
-                await FirebaseFirestore.instance
-                    .collection('posts')
-                    .doc()
-                    .set(newPost.toJson());
-                // ignore: unused_result
-                ref.refresh(userPostsProvider);
-                ref.refresh(allPostsProvider);
-              } catch (e) {
-                debugPrint(e.toString());
-              } finally {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                // add new post infirestore
+                try {
+                  //upload file and pass the download link referenced by firebase storage into a post class
+                  final fileSetter = await storageInstance
+                      .child('media/${DateTime.now()}.jpg')
+                      .putFile(fileToUpload);
+                  final String media = await fileSetter.ref.getDownloadURL();
+                  Post newPost = Post(
+                    postId: "",
+                    media: media,
+                    description: descriptionController.text,
+                    isLikeAllowed: isLikeAllowed,
+                    isCommentAllowed: isCommentAllowed,
+                    isImage: widget.isImage,
+                    createdAt: Timestamp.fromDate(DateTime.now()),
+                    userId: authDetails.userId,
+                  );
+                  await FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc()
+                      .set(newPost.toJson());
+                  // ignore: unused_result
+                  ref.refresh(userPostsProvider);
+                  // ignore: unused_result
+                  ref.refresh(allPostsProvider);
+                } catch (e) {
+                  debugPrint(e.toString());
+                } finally {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                }
               }
             },
             icon: const FaIcon(
