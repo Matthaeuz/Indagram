@@ -8,6 +8,7 @@ import 'package:indagram/constants.dart';
 // import 'package:indagram/state/helpers/post_helpers.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
+import 'package:indagram/views/widgets/loading_overlay.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';
 
 class NewPostScreen extends ConsumerStatefulWidget {
@@ -54,6 +55,13 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
         actions: [
           IconButton(
             onPressed: () async {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return const LoadingOverlay();
+                },
+              );
               Post newPost = Post(
                 postId: "1",
                 media: widget.media,
