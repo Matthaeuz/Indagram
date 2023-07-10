@@ -47,14 +47,14 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
               color: AppColors.appBarFgColor,
             ),
           ),
-          IconButton(
+          authDetails.userId == widget.post.userId ? IconButton(
             onPressed: () {},
             icon: const FaIcon(
               Icons.delete,
               size: 20.0,
               color: AppColors.appBarFgColor,
             ),
-          ),
+          ) : const SizedBox()
         ],
       ),
       body: Container(
