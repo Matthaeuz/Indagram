@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -105,7 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
+                            builder: (context) => const HomeScreen(),
                           ),
                         );
                       } else {
@@ -129,6 +131,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           user.additionalUserInfo!.profile!['id'].toString();
                       debugPrint(
                           'details: ${user.additionalUserInfo?.profile?['login']}, ${user.additionalUserInfo?.profile?['id']}, ${user.additionalUserInfo?.profile?['email']},');
+                      // ignore: unnecessary_null_comparison
                       if (user != null) {
                         User newUser = User(
                           displayName:

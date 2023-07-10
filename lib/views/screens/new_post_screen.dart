@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/models/post.dart';
+import 'package:indagram/state/providers/posts/all_posts_provider.dart';
 import 'package:indagram/state/providers/posts/user_posts_provider.dart';
 import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/widgets/loading_overlay.dart';
@@ -93,9 +94,11 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     .set(newPost.toJson());
                 // ignore: unused_result
                 ref.refresh(userPostsProvider);
+                ref.refresh(allPostsProvider);
               } catch (e) {
                 debugPrint(e.toString());
               } finally {
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               }
             },

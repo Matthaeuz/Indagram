@@ -1,8 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
-import 'package:indagram/state/models/post.dart';
 import 'package:indagram/views/screens/new_post_screen.dart';
 import 'package:indagram/views/tabs/home_tab.dart';
 import 'package:indagram/views/tabs/search_tab.dart';
@@ -103,18 +104,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 final XFile? imageFile =
                     await picker.pickImage(source: ImageSource.gallery);
                 if (imageFile == null) {
-                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   return;
                 }
-                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
 
-                // ignore: use_build_context_synchronously
                 final List<String> images = ref.watch(imageProvider);
                 images.add(imageFile.path);
 
-                // ignore: use_build_context_synchronously
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -152,7 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             unselectedLabelColor: AppColors.tabIndicatorColor,
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             UserTab(), // not sure if we add const since it is a consumer widget
             SearchTab(),
