@@ -37,6 +37,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bodyColor,
       appBar: AppBar(
         title: const Text(
           'Create New Post',
@@ -72,7 +73,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                 debugPrint(e.toString());
               } finally {
                 Navigator.of(context).pop();
-              }       
+              }
             },
             icon: const FaIcon(
               Icons.send,
@@ -99,6 +100,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     controller: descriptionController,
+                    cursorColor: AppColors.activeFieldColor,
                     style: const TextStyle(
                       color: AppColors.appBarFgColor,
                       fontSize: FontSizes.bodyFontSize,
@@ -106,6 +108,9 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     decoration: const InputDecoration(
                       labelText: AppTexts.descFieldText,
                       labelStyle: TextStyle(
+                        color: AppColors.tabIndicatorColor,
+                      ),
+                      floatingLabelStyle: TextStyle(
                         color: AppColors.activeFieldColor,
                       ),
                       focusedBorder: UnderlineInputBorder(

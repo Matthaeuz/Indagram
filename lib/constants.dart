@@ -12,10 +12,12 @@ class AppColors {
   static const tabIndicatorColor = Color(0xff6a6f70);
   static const activeFieldColor = Color(0xff61707a);
   static const activeSwitchColor = Color(0xff92fcdd);
+  static const noneColor = Color(0xff9a9a9a);
 }
 
 class FontSizes {
   static const titleFontSize = 40.0;
+  static const noneFontSize = 20.0;
   static const bodyFontSize = 16.0;
   static const subtitleFontSize = 14.0;
 }
@@ -30,4 +32,9 @@ class AppTexts {
       'By allowing likes, users will be able to press the like button on your post';
   static const allowCommentText =
       'By allowing comments, users will be able to comment on your post';
+  static const commentText = 'Write your comment here...';
+  static const noCommentText =
+      'Nobody has commented on this post yet. You can change that though, and be the first person who comments!';
+  static const deleteCommentText =
+      'Are you sure you want to delete this comment?';
 }

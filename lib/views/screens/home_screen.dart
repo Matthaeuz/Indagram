@@ -15,7 +15,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final imageProvider = Provider<List<String>>((ref) => []);
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key,});
+  const HomeScreen({
+    super.key,
+  });
 
   @override
   // State<HomeScreen> createState() => _HomeScreenState();
@@ -24,16 +26,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 final picker = ImagePicker();
 
-
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   // temporary state management
   List<Post> userPosts = [];
-  
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.bodyColor,
         appBar: AppBar(
           title: const Text(
             AppTexts.appBarText,
