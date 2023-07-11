@@ -52,7 +52,7 @@ class CommentItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authDetails = ref.watch(authDetailsProvider);
-    final displayName = ref.watch(displayNameProvider(comment.userId)).value;
+    final displayName = ref.watch(displayNameProvider(comment.userId)).value?.value;
 
     if (displayName != null) {
       return ListTile(

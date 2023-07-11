@@ -1,16 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:indagram/constants.dart';
-import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/posts/current_post_provider.dart';
 import 'package:indagram/state/providers/search/keyword_provider.dart';
 import 'package:indagram/state/providers/search/matched_posts_provider.dart';
 import 'package:indagram/views/screens/post_details_screen.dart';
 import 'package:indagram/views/widgets/video_thumb.dart';
-
-import '../../state/providers/posts/all_posts_provider.dart';
 
 class SearchTab extends ConsumerStatefulWidget {
   const SearchTab({super.key});
