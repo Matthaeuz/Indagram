@@ -9,6 +9,11 @@ class User {
   final String userId;
   final String? email;
 
+  User.base()
+      : displayName = '',
+        userId = '',
+        email = '';
+
   // constructor that unpacks doc.data()
   User.fromJson({
     required Map<String, dynamic> json,

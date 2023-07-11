@@ -54,29 +54,33 @@ class CommentItem extends ConsumerWidget {
     final authDetails = ref.watch(authDetailsProvider);
     final displayName = ref.watch(displayNameProvider(comment.userId)).value;
 
-    return ListTile(
-      title: Text(
-        displayName == null ? '' : '$displayName ',
-        style: const TextStyle(
-          color: AppColors.appBarFgColor,
-          fontWeight: FontWeight.bold,
+    if (displayName != null) {
+      return ListTile(
+        title: Text(
+          '$displayName ',
+          style: const TextStyle(
+            color: AppColors.appBarFgColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      subtitle: Text(
-        comment.comment,
-        style: const TextStyle(
-          color: AppColors.bodyTextColor,
+        subtitle: Text(
+          comment.comment,
+          style: const TextStyle(
+            color: AppColors.bodyTextColor,
+          ),
         ),
-      ),
-      trailing: authDetails.userId == comment.userId
-          ? IconButton(
-              onPressed: () {
-                displayDeleteDialog(context, ref);
-              },
-              icon: const Icon(Icons.delete),
-              color: AppColors.appBarFgColor,
-            )
-          : const SizedBox(),
-    );
+        trailing: authDetails.userId == comment.userId
+            ? IconButton(
+                onPressed: () {
+                  displayDeleteDialog(context, ref);
+                },
+                icon: const Icon(Icons.delete),
+                color: AppColors.appBarFgColor,
+              )
+            : const SizedBox(),
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
   }
 }
