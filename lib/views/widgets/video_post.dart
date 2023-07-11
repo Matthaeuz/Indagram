@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:indagram/constants.dart';
 import 'package:video_player/video_player.dart';
@@ -20,8 +18,8 @@ class _VideoPostState extends State<VideoPost> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(
-      File(widget.video),
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(widget.video),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     )..initialize().then((_) {
         _controller.play();

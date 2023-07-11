@@ -34,6 +34,9 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
     final post = ref.watch(currentPostProvider);
     final postComments = ref.watch(postCommentsProvider);
     final posts = ref.watch(allPostsProvider);
+    final displayName = ref.watch(displayNameProvider(post.userId));
+
+    debugPrint('${posts.value!.any((p) => p.postId == post.postId)}');
 
     return Scaffold(
       backgroundColor: AppColors.bodyColor,
@@ -71,8 +74,9 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                       ref
                           .read(currentPostProvider.notifier)
                           .updateCurrentPost(Post.base());
-
+                      // ignore: unused_result
                       ref.refresh(allPostsProvider);
+                      // ignore: unused_result
                       ref.refresh(userPostsProvider);
                     } catch (e) {
                       debugPrint(e.toString());
@@ -87,7 +91,8 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
               : const SizedBox()
         ],
       ),
-      body: post.postId == ''
+      // check if post is still contained in posts when posts is rebuilt
+      body: !posts.value!.any((p) => p.postId == post.postId)
           ? Container(
               color: AppColors.bodyColor,
               padding: const EdgeInsets.all(8.0),
@@ -154,7 +159,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                             Flexible(
                               child: RichText(
                                 text: TextSpan(
-                                  text: '${authDetails.displayName} ',
+                                  text: '${displayName.value} ',
                                   style: const TextStyle(
                                     color: AppColors.bodyTextColor,
                                     fontSize: FontSizes.subtitleFontSize,

@@ -72,7 +72,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     return const LoadingOverlay();
                   },
                 );
-                // add new post infirestore
+                // add new post in firestore
                 try {
                   //upload file and pass the download link referenced by firebase storage into a post class
                   final fileSetter = await storageInstance
