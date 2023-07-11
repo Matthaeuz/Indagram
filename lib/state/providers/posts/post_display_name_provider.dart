@@ -8,5 +8,8 @@ final displayNameProvider = StreamProvider.autoDispose.family<String, String>((r
       .where('userId', isEqualTo: userId)
       .limit(1)
       .snapshots()
-      .map((snapshot) => snapshot.docs.isNotEmpty ? snapshot.docs.first.get('displayName') : '');
+      .map((snapshot) => snapshot.docs.isNotEmpty
+          ? snapshot.docs.first.get('displayName')
+          : '');
 });
+
