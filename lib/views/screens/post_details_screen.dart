@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:indagram/constants.dart';
+import 'package:indagram/state/models/like.dart';
 import 'package:indagram/state/models/post.dart';
 import 'package:indagram/state/providers/comments/post_comments_provider.dart';
+import 'package:indagram/state/providers/likes/post_like_provider.dart';
+import 'package:indagram/state/providers/likes/user_like_provider.dart';
 import 'package:indagram/state/providers/posts/all_posts_provider.dart';
 import 'package:indagram/state/providers/posts/current_post_provider.dart';
 import 'package:indagram/state/providers/posts/post_display_name_provider.dart';
@@ -26,8 +29,6 @@ class PostDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
-  bool isLiked = false;
-
   @override
   Widget build(BuildContext context) {
     final authDetails = ref.watch(authDetailsProvider);
@@ -35,6 +36,8 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
     final postComments = ref.watch(postCommentsProvider);
     final posts = ref.watch(allPostsProvider);
     final displayName = ref.watch(displayNameProvider(post.userId));
+    final userLike = ref.watch(userLikeProvider);
+    final likesCount = ref.watch(postLikeProvider);
 
     debugPrint('${posts.value!.any((p) => p.postId == post.postId)}');
 
@@ -74,9 +77,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                       ref
                           .read(currentPostProvider.notifier)
                           .updateCurrentPost(Post.base());
-                      // ignore: unused_result
                       ref.refresh(allPostsProvider);
-                      // ignore: unused_result
                       ref.refresh(userPostsProvider);
                     } catch (e) {
                       debugPrint(e.toString());
@@ -121,13 +122,39 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                         children: [
                           post.isLikeAllowed
                               ? IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isLiked = !isLiked;
-                                    });
+                                  onPressed: () async {
+                                    if (userLike.value! == false) {
+                                      try {
+                                        Like newLike = Like(
+                                          likeId: "",
+                                          userId: authDetails.userId,
+                                          postId: post.postId,
+                                        );
+                                        await FirebaseFirestore.instance
+                                            .collection('likes')
+                                            .doc()
+                                            .set(newLike.toJson());
+                                        ref.refresh(userLikeProvider);
+                                      } catch (e) {
+                                        debugPrint(e.toString());
+                                      }
+                                    } else {
+                                      FirebaseFirestore.instance
+                                          .collection('likes')
+                                          .where("userId",
+                                              isEqualTo: authDetails.userId)
+                                          .where("postId",
+                                              isEqualTo: post.postId)
+                                          .get()
+                                          .then((snapshot) async {
+                                        for (final doc in snapshot.docs) {
+                                          await doc.reference.delete();
+                                        }
+                                      });
+                                    }
                                   },
                                   icon: FaIcon(
-                                    isLiked
+                                    userLike.value!
                                         ? FontAwesomeIcons.solidHeart
                                         : FontAwesomeIcons.heart,
                                     color: AppColors.appBarFgColor,
@@ -197,9 +224,9 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                             ),
                             const AppDivider(padding: 8.0),
                             post.isLikeAllowed
-                                ? const Text(
-                                    '0 people liked this',
-                                    style: TextStyle(
+                                ? Text(
+                                    '${likesCount.value} people liked this',
+                                    style: const TextStyle(
                                       color: AppColors.bodyTextColor,
                                       fontSize: FontSizes.subtitleFontSize,
                                       fontWeight: FontWeight.w800,
