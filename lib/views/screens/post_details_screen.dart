@@ -39,6 +39,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
     final userLike = ref.watch(userLikeProvider);
     final likesCount = ref.watch(postLikeProvider);
 
+    debugPrint('${likesCount.value}');
     debugPrint('${posts.value!.any((p) => p.postId == post.postId)}');
 
     return Scaffold(
@@ -93,207 +94,213 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
         ],
       ),
       // check if post is still contained in posts when posts is rebuilt
-      body: !posts.value!.any((p) => p.postId == post.postId)
-          ? Container(
-              color: AppColors.bodyColor,
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                'Something wrong happened. This post may be missing.',
-                style: TextStyle(
-                  color: AppColors.bodyTextColor,
-                  fontSize: FontSizes.bodyFontSize,
-                ),
-              ),
-            )
-          : Container(
-              color: AppColors.bodyColor,
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      post.isImage
-                          ? Image.network(
-                              post.media,
-                              fit: BoxFit.cover,
-                            )
-                          : VideoPost(video: post.media),
-                      Row(
-                        children: [
-                          post.isLikeAllowed
-                              ? IconButton(
-                                  onPressed: () async {
-                                    if (userLike.value! == false) {
-                                      try {
-                                        Like newLike = Like(
-                                          likeId: "",
-                                          userId: authDetails.userId,
-                                          postId: post.postId,
-                                        );
-                                        await FirebaseFirestore.instance
-                                            .collection('likes')
-                                            .doc()
-                                            .set(newLike.toJson());
-                                        ref.refresh(userLikeProvider);
-                                      } catch (e) {
-                                        debugPrint(e.toString());
-                                      }
-                                    } else {
-                                      FirebaseFirestore.instance
-                                          .collection('likes')
-                                          .where("userId",
-                                              isEqualTo: authDetails.userId)
-                                          .where("postId",
-                                              isEqualTo: post.postId)
-                                          .get()
-                                          .then((snapshot) async {
-                                        for (final doc in snapshot.docs) {
-                                          await doc.reference.delete();
-                                        }
-                                      });
-                                    }
-                                  },
-                                  icon: FaIcon(
-                                    userLike.value!
-                                        ? FontAwesomeIcons.solidHeart
-                                        : FontAwesomeIcons.heart,
-                                    color: AppColors.appBarFgColor,
-                                  ),
-                                )
-                              : const SizedBox(),
-                          post.isCommentAllowed
-                              ? IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CommentScreen(),
-                                      ),
-                                    );
-                                  },
-                                  icon: const FaIcon(
-                                    Icons.mode_comment_outlined,
-                                    color: AppColors.appBarFgColor,
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: RichText(
-                                text: TextSpan(
-                                  text: '${displayName.value} ',
-                                  style: const TextStyle(
-                                    color: AppColors.bodyTextColor,
-                                    fontSize: FontSizes.subtitleFontSize,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: post.description,
-                                      style: const TextStyle(
-                                        color: AppColors.bodyTextColor,
-                                        fontSize: FontSizes.subtitleFontSize,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+      body: Container(
+        color: AppColors.bodyColor,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverList(
+              delegate: SliverChildListDelegate([
+                post.isImage
+                    ? Image.network(
+                        post.media,
+                        fit: BoxFit.cover,
+                      )
+                    : VideoPost(video: post.media),
+                Row(
+                  children: [
+                    post.isLikeAllowed
+                        ? IconButton(
+                            onPressed: () async {
+                              if (userLike.value! == false) {
+                                try {
+                                  Like newLike = Like(
+                                    likeId: "",
+                                    userId: authDetails.userId,
+                                    postId: post.postId,
+                                  );
+                                  await FirebaseFirestore.instance
+                                      .collection('likes')
+                                      .doc()
+                                      .set(newLike.toJson());
+                                  ref.refresh(userLikeProvider);
+                                } catch (e) {
+                                  debugPrint(e.toString());
+                                }
+                              } else {
+                                FirebaseFirestore.instance
+                                    .collection('likes')
+                                    .where("userId",
+                                        isEqualTo: authDetails.userId)
+                                    .where("postId", isEqualTo: post.postId)
+                                    .get()
+                                    .then((snapshot) async {
+                                  for (final doc in snapshot.docs) {
+                                    await doc.reference.delete();
+                                  }
+                                });
+                              }
+                            },
+                            icon: FaIcon(
+                              userLike.value!
+                                  ? FontAwesomeIcons.solidHeart
+                                  : FontAwesomeIcons.heart,
+                              color: AppColors.appBarFgColor,
                             ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              DateFormat('d MMM y, h:mm a')
-                                  .format(post.createdAt.toDate()),
+                          )
+                        : const SizedBox(),
+                    post.isCommentAllowed
+                        ? IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const CommentScreen(),
+                                ),
+                              );
+                            },
+                            icon: const FaIcon(
+                              Icons.mode_comment_outlined,
+                              color: AppColors.appBarFgColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
+                displayName.when(data: (data) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: RichText(
+                            text: TextSpan(
+                              text: '${displayName.value?.value} ',
                               style: const TextStyle(
                                 color: AppColors.bodyTextColor,
                                 fontSize: FontSizes.subtitleFontSize,
                                 fontWeight: FontWeight.w800,
                               ),
+                              children: [
+                                TextSpan(
+                                  text: post.description,
+                                  style: const TextStyle(
+                                    color: AppColors.bodyTextColor,
+                                    fontSize: FontSizes.subtitleFontSize,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const AppDivider(padding: 8.0),
-                            post.isLikeAllowed
-                                ? Text(
-                                    '${likesCount.value} people liked this',
-                                    style: const TextStyle(
-                                      color: AppColors.bodyTextColor,
-                                      fontSize: FontSizes.subtitleFontSize,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  )
-                                : const SizedBox(),
-                            post.isCommentAllowed
-                                ? postComments.when(data: (comments) {
-                                    if (comments.isNotEmpty) {
-                                      return ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        itemCount: comments.length > 3
-                                            ? 3
-                                            : comments.length,
-                                        itemBuilder: (context, index) {
-                                          return RichText(
-                                            text: TextSpan(
-                                              text:
-                                                  '${ref.watch(displayNameProvider(comments.elementAt(index).userId)).value} ',
-                                              style: const TextStyle(
-                                                color: AppColors.bodyTextColor,
-                                                fontSize:
-                                                    FontSizes.subtitleFontSize,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                              children: [
-                                                TextSpan(
-                                                  text: comments
-                                                      .elementAt(index)
-                                                      .comment,
-                                                  style: const TextStyle(
-                                                    color:
-                                                        AppColors.bodyTextColor,
-                                                    fontSize: FontSizes
-                                                        .subtitleFontSize,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      return const SizedBox();
-                                    }
-                                  }, error: (error, stackTrace) {
-                                    debugPrint('something happened, $error');
-                                    return const CircularProgressIndicator(
-                                        color: AppColors.bodyTextColor);
-                                  }, loading: () {
-                                    return const CircularProgressIndicator(
-                                        color: AppColors.bodyTextColor);
-                                  })
-                                : const SizedBox(),
-                          ],
+                          ),
                         ),
+                      ],
+                    ),
+                  );
+                }, error: (error, stackTrace) {
+                  debugPrint('something happened, $error');
+                  return const CircularProgressIndicator(
+                      color: AppColors.bodyTextColor);
+                }, loading: () {
+                  return const SizedBox();
+                }),
+                postComments.when(
+                  data: (data) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            DateFormat('d MMM y, h:mm a')
+                                .format(post.createdAt.toDate()),
+                            style: const TextStyle(
+                              color: AppColors.bodyTextColor,
+                              fontSize: FontSizes.subtitleFontSize,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const AppDivider(padding: 8.0),
+                          post.isLikeAllowed
+                              ? Text(
+                                  '${likesCount.value ?? 0} people liked this',
+                                  style: const TextStyle(
+                                    color: AppColors.bodyTextColor,
+                                    fontSize: FontSizes.subtitleFontSize,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                )
+                              : const SizedBox(),
+                          post.isCommentAllowed
+                              ? postComments.when(data: (comments) {
+                                  if (comments.isNotEmpty) {
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      itemCount: comments.length > 3
+                                          ? 3
+                                          : comments.length,
+                                      itemBuilder: (context, index) {
+                                        final commenterName = ref.watch(displayNameProvider(comments.elementAt(index).userId)).value?.value;
+                                        return RichText(
+                                          text: TextSpan(
+                                            text:
+                                                '$commenterName ',
+                                            style: const TextStyle(
+                                              color: AppColors.bodyTextColor,
+                                              fontSize:
+                                                  FontSizes.subtitleFontSize,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: comments
+                                                    .elementAt(index)
+                                                    .comment,
+                                                style: const TextStyle(
+                                                  color:
+                                                      AppColors.bodyTextColor,
+                                                  fontSize: FontSizes
+                                                      .subtitleFontSize,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                }, error: (error, stackTrace) {
+                                  debugPrint('something happened, $error');
+                                  return const CircularProgressIndicator(
+                                      color: AppColors.bodyTextColor);
+                                }, loading: () {
+                                  return const CircularProgressIndicator(
+                                      color: AppColors.bodyTextColor);
+                                })
+                              : const SizedBox(),
+                        ],
                       ),
-                    ]),
-                  ),
-                ],
-              ),
+                    );
+                  },
+                  error: (e, stackTrace) {
+                    debugPrint('error $e');
+                    return const SizedBox();
+                  },
+                  loading: () {
+                    return const CircularProgressIndicator();
+                  },
+                )
+              ]),
             ),
+          ],
+        ),
+      ),
     );
   }
 }

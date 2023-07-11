@@ -14,9 +14,5 @@ class AuthDetailsNotifier extends StateNotifier<User> {
 }
 
 final authDetailsProvider = StateNotifierProvider<AuthDetailsNotifier, User>((ref) {
-  return AuthDetailsNotifier(User(
-    displayName: '',
-    userId: '',
-    email: '',
-  ));
+  return AuthDetailsNotifier(User.base());
 });

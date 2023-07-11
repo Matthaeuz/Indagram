@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:indagram/constants.dart';
 import 'package:indagram/state/helpers/auth_helpers.dart';
+import 'package:indagram/state/models/user.dart';
+import 'package:indagram/state/providers/users/auth_provider.dart';
 import 'package:indagram/views/screens/login_screen.dart';
 import 'package:indagram/views/screens/new_post_screen.dart';
 import 'package:indagram/views/tabs/home_tab.dart';
@@ -40,14 +42,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           subtitle: AppTexts.logOutText,
           action: 'Log out',
           onSubmit: () async {
+            debugPrint('before signing out: ${ref.watch(authDetailsProvider).userId}');
             await signOut();
+            ref.read(authDetailsProvider.notifier).updateUser(User.base());
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const LoginScreen(),
               ),
             );
-            // Navigator.of(context).pop();
           },
         );
       },
