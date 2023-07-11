@@ -89,7 +89,17 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
           children: [
             Expanded(
               child: postComments.when(data: (comments) {
-                if (comments.isNotEmpty) {
+                if (comments.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      AppTexts.noCommentText,
+                      style: TextStyle(
+                        color: AppColors.noneColor,
+                        fontSize: FontSizes.noneFontSize,
+                      ),
+                    ),
+                  );
+                } else {
                   return ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.all(8.0),
@@ -100,21 +110,6 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                         comment: comments.elementAt(index),
                       );
                     },
-                  );
-                } else {
-                  return const Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(40.0),
-                        child: Text(
-                          AppTexts.noCommentText,
-                          style: TextStyle(
-                            color: AppColors.noneColor,
-                            fontSize: FontSizes.noneFontSize,
-                          ),
-                        ),
-                      ),
-                    ],
                   );
                 }
               }, error: (error, stackTrace) {

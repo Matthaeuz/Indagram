@@ -52,10 +52,11 @@ class CommentItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authDetails = ref.watch(authDetailsProvider);
+    final displayName = ref.watch(displayNameProvider(comment.userId)).value;
 
     return ListTile(
       title: Text(
-        '${ref.watch(displayNameProvider(comment.userId)).value} ',
+        displayName == null ? '' : '$displayName ',
         style: const TextStyle(
           color: AppColors.appBarFgColor,
           fontWeight: FontWeight.bold,
